@@ -41,7 +41,6 @@ class LogFileAnalyzer(object):
                         "ph":  {"type": str, "min_len": 2, "fullname": "Path to file"},
                         "dp":  {"type": int, values:{1: "MALICIOUS", 2:"CLEAN", 3: "UNKNOWN"}, "fullname": "Dispocition"
                       }
-        - log_file:  Full path to the log file to be examined.
     """
 
     @property
@@ -49,7 +48,7 @@ class LogFileAnalyzer(object):
         return self.__log_path
     @log_path.setter
     def log_path(self,value):
-        if value is None: self.__log_path=None
+        if value is None: self.__log_path=None; return
 
         assert isinstance(value,str), "Invalid log_path  given: " + str(value)
         assert os.path.exists(value), "Path provided was not found."
@@ -61,7 +60,7 @@ class LogFileAnalyzer(object):
         return self.__valid_keys
     @valid_keys.setter
     def valid_keys(self,value):
-        if value is None: self.__valid_keys=None
+        if value is None: self.__valid_keys=None; return
 
         assert isinstance(value,dict), "Invalid valid_key dictionary given: " + str(value)
         self.__valid_keys = value
@@ -73,7 +72,7 @@ class LogFileAnalyzer(object):
 
     def __init__(self, log_path=None, valid_keys=None):
         self.__data_frame = None
-        self.__log_path = log_path
+        self.log_path = log_path
         if valid_keys == None:
             uid_pattern = '^([0-9a-fA-F]{8})-([0-9a-fA-F]{4})-([0-9a-fA-F]{4})-([0-9a-fA-F]{4})-([0-9a-fA-F]{12})'
             sha_pattern = '^([0-9a-fA-f]{64})'
