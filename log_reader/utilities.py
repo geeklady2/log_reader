@@ -31,6 +31,7 @@ class StrPattern(object):
        return self.__pattern
     @pattern.setter
     def pattern(self, value):
+    	# TODO test that this is a regular expression
         if value is None: self.__pattern = None; return
         assert isinstance(value,str), "Invalid value given for pattern property: " + str(value)
         self.__pattern=value

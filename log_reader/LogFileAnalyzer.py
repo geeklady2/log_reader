@@ -194,6 +194,7 @@ class LogFileAnalyzer(object):
 
         # Use the pandas dataframe to do the counts
         tmp = self.__data_frame.groupby(['ext']).size()
+        print(tmp)
         return tmp
 
 
