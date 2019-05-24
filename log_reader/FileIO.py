@@ -15,7 +15,7 @@ Todo:
 
 import os
 
-class MyFileIO():
+class MyFileIO(object):
     """
     A class that handle reading and writing files.
 
@@ -58,7 +58,6 @@ class MyFileIO():
 
     def __init__(self, file_path=None):
         self.file_path = file_path
-
    
     def get_file_contents(self):
         """

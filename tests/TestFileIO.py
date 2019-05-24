@@ -55,12 +55,14 @@ class TestFileIO(unittest.TestCase):
 
 
         # Try setting file path to invalid values
+        test_obj = MyFileIO()
         with self.assertRaises(AssertionError):
             test_obj.file_path = ['/a/path', '/another/path']
 
         with self.assertRaises(AssertionError):
             test_obj.file_path = 234.234
 
+        test_obj.file_path = '/tmp/path/does/not/exist.txt'
         with self.assertRaises(AssertionError):
             test_obj.file_path = '/tmp/path/does/not/exist.txt'
 

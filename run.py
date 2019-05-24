@@ -19,7 +19,7 @@ def main(log_path):
     lr.log_path=log_path
     lr.read_and_validate()
     lr.show_file_type_counts()
-
+    
 def parse_args():
     """
     Parse the command-line arguments.

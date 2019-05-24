@@ -76,7 +76,7 @@ class LogFileAnalyzer(object):
         if valid_keys == None:
             uid_pattern = '^([0-9a-fA-F]{8})-([0-9a-fA-F]{4})-([0-9a-fA-F]{4})-([0-9a-fA-F]{4})-([0-9a-fA-F]{12})'
             sha_pattern = '^([0-9a-fA-f]{64})'
-            dir_pattern = '^(/[\w.]+)+'
+            dir_pattern = '^(\.)*(/[\w.]+)+|'
             self.__valid_keys = { "ts":  {"type": datetime, "min": 0, "fullname": "timestamp"},
                         "pt":  {"type": float, "min": 0.0,  "fullname": "processing time"},
                         "si":  {"type": StrPattern, "pattern": uid_pattern, "fullname": "Session ID"},
@@ -164,6 +164,11 @@ class LogFileAnalyzer(object):
             if len(line)==0: continue  # Skip blank lines
             line = eval(line)
 
+            # If the name and path are the same set the path to "."
+            # as it's assumed to be in the current directory
+            if line['nm'] == line['ph']:
+                line['ph'] = '.'
+
             # Validate the contents
             ok, err = self._validate_row(line)
             if not ok:
@@ -193,7 +198,6 @@ class LogFileAnalyzer(object):
 
         # Use the pandas dataframe to do the counts
         tmp = self.__data_frame.groupby(['ext']).size()
-        print(tmp)
         return tmp
 
 

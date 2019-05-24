@@ -62,7 +62,13 @@ it to run the tests as follows:
 1. pip install nose
 
 2. nosetests
+   nosetests --nocapture   (use this command to see the output commands in the tests)
 
+Note that two of the test are expected to fail as the StrPattern class
+does not verify that the pattern value is a valid regular expression and
+MyFileIO does not check if the file exists when file_path is set.  This
+could be considered ok behaviour, it might be better if it errors 
+earlier rather then later though when these values are being used.
 
 Original Request
 ---------------------

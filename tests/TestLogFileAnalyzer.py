@@ -89,7 +89,13 @@ class TestLogFileAnalyzer(unittest.TestCase):
     	"""
     	Do test on reading the data from a file and validating it.
     	"""
+        # Read a file with 9985 valid records in it.
+        # The invalid ones that were reported have at least one field
+        # that does not match the expected values we've used in the
+        # example.
     	test = LogFileAnalyzer(log_path=self._test_log)
+    	num_valid_records = test.read_and_validate()
+        self.assertEqual(num_valid_records, 9985, msg='The wrong number of valid records were found in the test file.')
 
         # TODO test with a number of bad files
 
@@ -99,5 +105,18 @@ class TestLogFileAnalyzer(unittest.TestCase):
         """
         test = LogFileAnalyzer(log_path=self._test_log)
 
-
+        # This is an error, the file must be read and validated first.
+        with self.assertRaises(AssertionError):
+            test.show_file_type_counts()
+        
+        # The results are Based on findings used with grep manually
+        # TODO would be to keep track of the invalid entries so that
+        # grep usage coule be automated.
+        test.read_and_validate()
+        df = test.show_file_type_counts()
+        self.assertEqual(208, df['class'], msg="Number of .class files found differs.")
+        self.assertEqual(174, df['mid'], msg="Number of .mid files found differs.")
+        self.assertEqual(155, df['xls'], msg="Number of .xls files found differs.")
+        self.assertEqual(9985, df.sum(), msg="Sum of all the counts is not equal to number of valid records.")
+ 
         # TODO test with a number of different bad files
