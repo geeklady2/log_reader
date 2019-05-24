@@ -19,8 +19,8 @@ has the following keys:
 import os 
 from datetime import datetime
 import pandas as pd
-from FileIO import MyFileIO
-from utilities import StrPattern
+from log_reader.FileIO import MyFileIO
+from log_reader.utilities import StrPattern
 
 
 class LogFileAnalyzer(object):
