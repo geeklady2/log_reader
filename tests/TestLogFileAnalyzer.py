@@ -9,7 +9,10 @@ Test the LogFileAnalyzer class.
 import os, shutil
 import unittest
 import pandas
+from datetime import datetime
 from log_reader.LogFileAnalyzer import LogFileAnalyzer
+from log_reader.utilities import StrPattern
+
 
 class TestLogFileAnalyzer(unittest.TestCase):
 
@@ -84,6 +87,66 @@ class TestLogFileAnalyzer(unittest.TestCase):
         with self.assertRaises(AttributeError):
             test.data_frame=df
 
+    def test_validate_row(self):
+    	"""
+        This test tests the protected method that does a lot of the grunt
+        work verifing the values in a row of data
+        """
+        test = LogFileAnalyzer(log_path=self._test_log)
+        test.valid_keys = { "a": {"type": str, "max_len": 10, "min_len": 2}, 
+                            "b": {"type": int, "min": -10, "max": 10 },
+                            "c": {"type": StrPattern, "pattern" : "([\w.]+)@([\w.]+)"},
+                            "d": {"type": datetime, "min" : 1000 },
+                            "e": {"type": str, "values": ["a", "b", "c"]},
+                          }
+
+        # Valid row tests
+        row = {"a": "some text", "b" : 0, "c": "my_email@somewhere.com", "d" : "2019-05-22 10:30:23", "e" : "c"} 
+        ok, err = test._validate_row(row)
+        self.assertTrue(ok, msg="First validate row test failed.")
+
+        row["a"]="12"; row["b"] = -10
+        ok, err = test._validate_row(row)
+        self.assertTrue(ok, msg="Second validate row test failed.")  
+        
+        row["a"]="0123456789"; row["b"]=10; row["e"]="a"
+        ok, err = test._validate_row(row)
+        self.assertTrue(ok, msg="Third validate row test failed.")              
+
+        
+        #Invalid row tests
+        row["a"]=""
+        ok, err = test._validate_row(row)
+        self.assertFalse(ok, msg="First invalid row test failed.")        
+
+        row["a"]="01234567890"
+        ok, err = test._validate_row(row)
+        self.assertFalse(ok, msg="Second invalid row test failed.")        
+
+        row["a"]="a string"; row["b"]=-11
+        ok, err = test._validate_row(row)
+        self.assertFalse(ok, msg="Third invalid row test failed.") 
+
+        row["b"]=11
+        ok, err = test._validate_row(row)
+        self.assertFalse(ok, msg="Fourth invalid row test failed.")        
+
+        row["b"]=0;  row["c"]="a non email"
+        ok, err = test._validate_row(row)
+        self.assertFalse(ok, msg="Fifth invalid row test failed.")    
+
+        row["c"]="just_me@here.com";  row["d"]=0
+        ok, err = test._validate_row(row)
+        self.assertFalse(ok, msg="Sixth invalid row test failed.") 
+
+        row["d"]="Apr 1, 2019"
+        ok, err = test._validate_row(row)
+        self.assertFalse(ok, msg="Seventh invalid row test failed.")  
+
+        row["d"]="2019-03-14 17:23:22"; row["e"]=3
+        ok, err = test._validate_row(row)
+        self.assertFalse(ok, msg="Eigth invalid row test failed.")  
+                   
 
     def test_reading_a_file(self):
     	"""

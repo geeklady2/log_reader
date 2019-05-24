@@ -134,7 +134,10 @@ class LogFileAnalyzer(object):
                     rvalue = datetime.fromtimestamp(seconds)
                 except:
                      # Time is in YYYY-MM-DD HH:mm:ss format
-                     rvalue =  datetime.strptime(row[vkey], "%Y-%m-%d %H:%M:%S")
+                     try:
+                         rvalue =  datetime.strptime(row[vkey], "%Y-%m-%d %H:%M:%S")
+                     except:
+                        return False, str(vkey) + ' value "' + str(rvalue) + '" is not in the expected format.'
 
                 if "min" in vvalue.keys() and rvalue < datetime.fromtimestamp(int(vvalue['min'])):
                     return False, str(vkey) + ' value "' + str(rvalue) + '" must be after ' + str(vvalue['min'])
